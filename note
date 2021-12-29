@@ -1,0 +1,13 @@
+1. Đưa 1 URL -> Tìm tên app, tên hàm/tên class, tên template, parameter,template đó có thừa kế template hay không ? chỉ các block
+
+2. Các câu lệnh thao tác với django ORM
+
+3. Các chú ý khi làm với ClassBaseView: ListView, CreateView,..... ?
+
+4. Thao tác với django ORM bằng command
+
+5. Thay đổi port của django ? Có xài đc port 80 hoặc 443 hay không ?
+
+6. Authentication của django: dùng cái gì để xác định đc đã login hay chưa ?
+    ? jwt ? cookie ? sessionStorage ?
+

@@ -1,0 +1,181 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    List All Places
+{% endblock title %}
+
+{% block content %}
+    {% load myfilter %}
+    {% load humanize %}
+    {% load static %}
+    <div class="col-12">
+        <div class="">
+            <img src="{% static 'images/loader.gif' %}" class="img-fluid" alt="Python-Django" id="loader">
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Index</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">
+                        <a href="{% url 'add_place' %}">
+                            <i class="bi bi-plus-circle"></i>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for place in page_obj %}
+                    <tr>
+                        <td scope="row">{{ page_obj.number|make_index_paginattion:forloop.counter}}</td>
+                        <td>{{ place.name }}</td>
+                        <td>{{ place.address }}</td>
+                        <td>{{ place.country }}</td>
+                        <td>
+                            <a href="{% url 'view_detail_place' place_id=place.id %}" url="/place/detail/{{place.id}}">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'update_place' place_id=place.id %}">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'confirm_delete' place_id=place.id %}">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                            <button class="delete" data-info="{{place}}" data-url-delete="{% url 'delete_place' place_id=place.id %}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <!-- 
+                                    `page_obj`: tham số từ views truyền qua. `page_obj`: Page của Paginator
+                                    `page_obj.number`: Page hiện tại
+                                    `page_obj.has_previous`: kiểm tra coi, page_obj có trang trước/previous hay không ?
+                                    `page_obj.previous_page_number`: page_obj.number - 1
+                                    Ngược lại của previous là next
+                                    `page_obj.has_next`: kiểm tra coi, page_obj có trang tiếp/next hay không ?
+                                    `page_obj.next_page_number`: page_obj.number - 1
+                                    `page_obj.paginator.num_pages`: số lượng trang/page
+                                -->
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{page_obj.previous_page_number}}" aria-label="Previous">
+                                            <i class="bi bi-arrow-left-short"></i>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled" style="cursor:not-allowed">
+                                        <a class="page-link" aria-label="Previous">
+                                            <i class="bi bi-arrow-left-short"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% for page in page_obj.paginator.num_pages|make_range %}
+                                    {% if page_obj.number == page %}
+                                        <li class="page-item active"><a class="page-link" href="?page={{page}}">{{ page }}</a></li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link" href="?page={{page}}">{{ page }}</a></li>
+                                    {% endif %}
+                                    
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{page_obj.next_page_number}}" aria-label="Next">
+                                            <i class="bi bi-arrow-right-short"></i>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled" style="cursor:not-allowed">
+                                        <a class="page-link" aria-label="Next">
+                                            <i class="bi bi-arrow-right-short"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                            </ul>
+                          </nav>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="confirm-delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a id="btn-delete" class="btn btn-danger" href="">Detele</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $(".delete").each(function() {
+                $(this).click(function () {
+                    const url = $(this).data('url-delete');
+                    const body = $(this).data('info');
+                    $('.modal-body').text("Bạn có muốn xoá " + body);
+                    $("#btn-delete").attr("href", url);
+                    $("#confirm-delete").modal('show');
+                });
+            });
+            $("#search-keyword").change(function() {
+                var keyword = $(this).val();
+                $("table.table.table-striped > tbody").html("");
+                $("body").css("opacity", "0.5");
+                $("#loader").show();
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'search_places' %}",
+                    data: {
+                        keyword: keyword,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        var data_tbody= "";
+                        
+                        for(let i = 0; i<data.results.length; i++){
+                            data_tbody += `
+                                <tr>
+                                    <td>${i+1}</td>
+                                    <td>${data.results[i].name}</td>
+                                    <td>${data.results[i].address}</td>
+                                    <td>${data.results[i].country}</td>
+                                    <td></td>
+                                </tr>
+                            `;
+                        }
+                        console.log(data_tbody);
+                        $("table.table.table-striped > tbody").append(data_tbody);
+                        $("#loader").hide();
+                        $("body").css("opacity", "1");
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log(xhr.responseJSON.message);
+                        $("#loader").hide();
+                        $("body").css("opacity", "1");
+                    }
+                })
+            });
+        });
+    </script>
+{% endblock content %}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}
+        Title from base.html
+    {% endblock title %}</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-icons.css' %}">
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="{% url 'index' %}">PYTHON2108</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                      Function Base Views
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'list_places' %}">Place </a>
+                        <a class="dropdown-item" href="{% url 'list_restaurants' %}">Restaurant</a>
+                        <a class="dropdown-item" href="{% url 'list_waiters' %}">Waiter</a>
+                </li>
+                <!-- <li class="nav-item function-views">
+                    <a class="nav-link" href="{% url 'list_places' %}">Place <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item function-views">
+                    <a class="nav-link" href="{% url 'list_restaurants' %}">Restaurant</a>
+                </li>
+                <li class="nav-item function-views">
+                    <a class="nav-link" href="{% url 'list_waiters' %}">Waiter</a>
+                </li> -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+                      Class Base Views
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'class_list_places' %}">Place ListView</a>
+                        <a class="dropdown-item" href="{% url 'class_list_restaurants' %}">Restaurant ListView</a>
+                        <a class="dropdown-item" href="{% url 'class_list_waiters' %}">Waiter ListView</a>
+                </li>
+                <!-- <li class="nav-item class-views">
+                    <a class="nav-link" href="{% url 'class_list_places' %}">Place ListView<span class="sr-only">(current)</span></a>
+                </li> -->
+            </ul>
+            <form class="form-inline my-2 my-lg-0" action="" method="GET">
+                <input id="search-keyword" class="form-control mr-sm-2" name="keyword" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+            <div class="text-end" style="margin-left: 20px">
+                {% if user.is_authenticated %}
+                    <!-- Đã đăng nhập -->
+                    Welcome <strong>{{ user.first_name }} {{ user.last_name}}</strong>
+                    <a href="{% url 'logout_user' %}" class="btn btn-outline-success my-2 my-sm-0">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login_user' %}" class="btn btn-outline-success my-2 my-sm-0">
+                        <i class="bi bi-box-arrow-in-left"></i>
+                    </a>
+                    <a href="{% url 'register_user' %}" class="btn btn-outline-success my-2 my-sm-0">
+                        <i class="bi bi-person-bounding-box"></i>
+                    </a>
+                {% endif %}
+                
+            </div>
+        </div>
+        
+    </nav>
+    <div class="container">
+        <div class="row">
+            {% block content %}
+                
+            {% endblock content %}
+        </div>
+    </div>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

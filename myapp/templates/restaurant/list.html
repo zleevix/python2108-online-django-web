@@ -1,0 +1,51 @@
+{% extends '../base/base.html' %}
+
+{% block title %}
+    List Restaurant
+{% endblock title %}
+
+{% block content %}
+    <div class="col-12">
+        <table class="table table-striped">
+            <tr>
+                <th scope="col">Place Name</th>
+                <th scope="col">Serve Hotdogs</th>
+                <th scope="col">Serve Pizza</th>
+                <th scope="col">Serve Phở</th>
+                <th scope="col">
+                    <a href="{% url 'add_restaurant' %}">
+                        <i class="bi bi-plus-circle"></i>
+                    </a>
+                </th>
+            </tr>
+            {% for restaurant in restaurants %}
+            <tr>
+                <td scope="row">
+                    {{ restaurant.place.name }}
+                </td>
+                <td>
+                    <input type="checkbox" name="serves_hot_dogs" id="serves_hot_dogs" disabled {% if restaurant.serves_hot_dogs %} checked {% endif %}>
+                </td>
+                <td>
+                    <input type="checkbox" name="serves_pizza" id="serves_pizza" disabled {% if restaurant.serves_pizza %} checked {% endif %}>
+                </td>
+                <td>
+                    <input type="checkbox" name="serves_pho" id="serves_pho" disabled {% if restaurant.serves_pho %} checked {% endif %}>
+                </td>
+                <td>
+                    <a href="" >
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{% url 'update_restaurant' place_id=restaurant.place.id %}">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock content %}

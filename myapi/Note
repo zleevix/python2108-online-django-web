@@ -1,0 +1,28 @@
+CURD trong API
+REST API : cần cung cấp URL + HTTP Method
+HTTP Method: GET, POST, PUT, PATCH, DELETE, OPTIONS, .....
+
+HTTP Method ví dụ:
+GET : lấy thông tin về: list data và view detail data. (R)
+POST: tạo mới dữ liệu (C)
+PUT: chỉnh sửa dữ liệu (U) + thông để xác định. Dữ liệu gửi lên server và dữ liệu nhậ thì phải có tất cả thuộc tính của đối tương đó
+PATCH: chỉnh sửa dữ liệu (U)  + thông để xác định. Client muốn chỉnh sửa thuộc tính nào thì gửi lên dữ liệu đó.
+DELET: xoá dữ liệu (D)
+OPTIONS: thường là dùng để kiểm tra xem server nó hổ trợ những methods
+
+HTTP Status code ví dụ
+Xác định được lỗi từ server trả về
+HTTP Status
+200 -> OK không có lỗi
+201 Created
+204 No content
+404 Not Found
+403 Forbidden
+405 Method Not Allowed
+401 Unauthorization
+500 Internal Server
+400 Bad Request
+
+Content-type: kiễu dữ liệu gửi/nhận
+application/json: JSON
+application/xml

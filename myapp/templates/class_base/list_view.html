@@ -1,0 +1,264 @@
+{% extends '../base/base.html' %}
+
+{% block title %}
+    List Views
+{% endblock title %}
+
+{% block content %}
+    {% load myfilter %}
+    {% load humanize %}
+    {% load static %}
+    {{ class_name }}
+    <div class="col-12">
+        <div class="">
+            <img src="{% static 'images/loader.gif' %}" class="img-fluid" alt="Python-Django" id="loader">
+        </div>
+        <table class="table table-striped">
+            {% if all_places %}
+                <thead>
+                    <tr>
+                        <th scope="col">Index</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Country</th>
+                        <th scope="col">
+                            <a href="{% url 'class_add_place' %}">
+                                <i class="bi bi-plus-circle"></i>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for place in all_places %}
+                        <tr>
+                            <td scope="row">
+                                {{ page_obj.number|make_index_paginattion:forloop.counter}}
+                                <!-- make_index_paginattion(page_obj.number, forloop.counter) -->
+                            </td>
+                            <td>{{ place.name }}</td>
+                            <td>{{ place.address }}</td>
+                            <td>{{ place.country }}</td>
+                            <td>
+                                <a href="{% url 'class_view_detail_place' pk=place.id %}" url="/place/detail/{{place.id}}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'class_update_place' pk=place.id %}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'class_delete_place' pk=place.id %}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                <!--
+                                    Dùng form method POST nếu không muốn confirm. 
+                                    <form action="{% url 'class_delete_place' pk=place.id %}" method="GET">
+                                    {% csrf_token %}
+                                    <button type="submit">Xoá Luôn<i class="bi bi-trash"></i></button>
+                                </form>-->
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            {% endif %}
+            {% if all_restaurants %}
+                <thead>
+                    <tr>
+                        <th scope="col">Place Name</th>
+                        <th scope="col">Serve Hotdogs</th>
+                        <th scope="col">Serve Pizza</th>
+                        <th scope="col">Serve Phở</th>
+                        <th scope="col">
+                            <a href="{% url 'class_add_restaurant' %}">
+                                <i class="bi bi-plus-circle"></i>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for restaurant in all_restaurants %}
+                        <tr>
+                            <td scope="row">
+                                {{ restaurant.place.name }}
+                            </td>
+                            <td>
+                                <input type="checkbox" name="serves_hot_dogs" id="serves_hot_dogs" disabled {% if restaurant.serves_hot_dogs %} checked {% endif %}>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="serves_pizza" id="serves_pizza" disabled {% if restaurant.serves_pizza %} checked {% endif %}>
+                            </td>
+                            <td>
+                                <input type="checkbox" name="serves_pho" id="serves_pho" disabled {% if restaurant.serves_pho %} checked {% endif %}>
+                            </td>
+                            <td>
+                                <a href="{% url 'class_view_detail_restaurant' pk=restaurant.place.id %}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'class_update_restaurant' pk=restaurant.place.id %}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'class_delete_restaurant' pk=restaurant.place.id %}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            {% endif %}
+            {% if all_waiters %}
+                <thead>
+                    <tr>
+                        <th scope="col">Index</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Restaurant</th>
+                    
+                        <th scope="col">
+                            <a href="{% url 'class_add_waiter' %}">
+                                <i class="bi bi-plus-circle"></i>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                {% for waiter in all_waiters %}
+                    <tbody>
+                        <tr>
+                            <td scope="row">
+                                {{ page_obj.number|make_index_paginattion:forloop.counter}}
+                                <!-- make_index_paginattion(page_obj.number, forloop.counter) --></td>
+                            <td>{{ waiter.name }}</td>
+                            <td>{{ waiter.restaurant.place.name }}</td>
+                            <td>
+                                <a href="{% url 'class_view_detail_waiter' pk=waiter.id %}">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'class_update_waiter' pk=waiter.id %}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'class_delete_waiter' pk=waiter.id %}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            
+                            </td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+            {% endif %}
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{page_obj.previous_page_number}}" aria-label="Previous">
+                                            <i class="bi bi-arrow-left-short"></i>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled" style="cursor:not-allowed">
+                                        <a class="page-link" aria-label="Previous">
+                                            <i class="bi bi-arrow-left-short"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% for page in page_obj.paginator.num_pages|make_range %}
+                                    {% if page_obj.number == page %}
+                                        <li class="page-item active"><a class="page-link" href="?page={{page}}">{{ page }}</a></li>
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link" href="?page={{page}}">{{ page }}</a></li>
+                                    {% endif %}
+                                    
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{page_obj.next_page_number}}" aria-label="Next">
+                                            <i class="bi bi-arrow-right-short"></i>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled" style="cursor:not-allowed">
+                                        <a class="page-link" aria-label="Next">
+                                            <i class="bi bi-arrow-right-short"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                            </ul>
+                        </nav>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="confirm-delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a id="btn-delete" class="btn btn-danger" href="">Detele</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $(".delete").each(function() {
+                $(this).click(function () {
+                    const url = $(this).data('url-delete');
+                    const body = $(this).data('info');
+                    $('.modal-body').text("Bạn có muốn xoá " + body);
+                    $("#btn-delete").attr("href", url);
+                    $("#confirm-delete").modal('show');
+                });
+            });
+            $("#search-keyword").change(function() {
+                var keyword = $(this).val();
+                $("table.table.table-striped > tbody").html("");
+                $("body").css("opacity", "0.5");
+                $("#loader").show();
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'search_places' %}",
+                    data: {
+                        keyword: keyword,
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        var data_tbody= "";
+                        
+                        for(let i = 0; i<data.results.length; i++){
+                            data_tbody += `
+                                <tr>
+                                    <td>${i+1}</td>
+                                    <td>${data.results[i].name}</td>
+                                    <td>${data.results[i].address}</td>
+                                    <td>${data.results[i].country}</td>
+                                    <td></td>
+                                </tr>
+                            `;
+                        }
+                        console.log(data_tbody);
+                        $("table.table.table-striped > tbody").append(data_tbody);
+                        $("#loader").hide();
+                        $("body").css("opacity", "1");
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log(xhr.responseJSON.message);
+                        $("#loader").hide();
+                        $("body").css("opacity", "1");
+                    }
+                })
+            });
+        });
+    </script>
+{% endblock content %}

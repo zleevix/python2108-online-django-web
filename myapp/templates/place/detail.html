@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    View Detail Place
+{% endblock title %}
+
+{% block content %}
+    <div class="col-12">
+        <p>Place: {{ place }}</p>
+        <p>Restaurant: {{ place.restaurant }}</p>
+        List waiter
+        <ul>
+            {% for waiter in place.restaurant.waiter_set.all %}
+                <li>{{waiter}}</li>
+            {% endfor %}
+        </ul>
+    </div> 
+{% endblock content %}

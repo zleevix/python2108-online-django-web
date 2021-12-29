@@ -1,0 +1,50 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+    Add New Place
+{% endblock title %}
+{% block content %}
+    <div class="col-md-6 offset-md-3">
+        <form action="" method="post" autocomplete="off">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label }}
+                    {{ field }}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <p class="invalid-feedback" style="display: block !important">{{error}}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <input class="btn btn-success btn-lg btn-block" type="submit" value="Add">
+        </form>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $("#id_name").change(function() {
+                var name = $(this).val();
+                $("#message-name").remove();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'validate_name' %}",
+                    data: {
+                        name: $(this).val(),
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    },
+                    success: function(data) {
+                        // console.log(data);
+                        $("#id_name").addClass("is-valid").removeClass("is-invalid");
+                        $("#id_name").parent().append(`<p id='message-name' style='color:green; font-size: 10px;'>${data.message}</p>`);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        $("#id_name").addClass("is-invalid").removeClass("is-valid");
+                        //console.log(xhr.responseJSON.message);
+                        $("#id_name").parent().append(`<p id='message-name' style='color:red; font-size: 10px;'>${xhr.responseJSON.message}</p>`);
+                    }
+                })
+            });
+        });
+    </script>
+{% endblock content %}
